@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Search Juice WRLD Songs</title>
+</head>
+<body>
+    <h1>Search for Juice WRLD Songs</h1>
+    <input type="text" id="searchBox" placeholder="Search for a song">
+    <button onclick="searchSong()">Search</button>
+    <div id="results"></div>
+
+    <script>
+    async function searchSong() {
+        let query = document.getElementById("searchBox").value.toLowerCase();
+        let folderId = "1_EX3Q7GQih4pWg9s4i6sffNVHvzhAzOb"; // Your Google Drive folder ID
+        let apiKey = "YOUR_API_KEY"; // Replace with your actual API Key
+
+        let response = await fetch(`https://www.googleapis.com/drive/v3/files?q='${folderId}' in parents and name contains '${query}'&fields=files(id,name,mimeType)&key=${apiKey}`);
+        let data = await response.json();
+        let resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = "";
+
+        if (!data.files || data.files.length === 0) {
+            resultsDiv.innerHTML = "<p>No results found.</p>";
+            return;
+        }
+
+        data.files.forEach(file => {
+            let fileType = file.mimeType.includes("audio") ? "🎵 Listen" : "📄 View";
+            resultsDiv.innerHTML += `<p>
+                <a href="https://drive.google.com/file/d/${file.id}/view" target="_blank">${file.name}</a> | 
+                <a href="https://drive.google.com/uc?id=${file.id}&export=download" target="_blank">Download</a>
+            </p>`;
+        });
+    }
+    </script>
+
+    <p><a href="https://drive.google.com/drive/folders/1_EX3Q7GQih4pWg9s4i6sffNVHvzhAzOb" target="_blank">Access All Juice WRLD Songs</a></p>
+</body>
+</html>
